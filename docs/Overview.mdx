@@ -3,10 +3,6 @@ Each example starts with a mathematical specification, proves that its implement
 satisfy that specification in Lean, and compares their costs under an explicit model.
 The collection grows as we study more programs and proof techniques.
 
-Start with [Map fusion](../SameButBetter/MapFusion/Note.mdx): two successive list
-maps and a single map of the composed function produce the same output, with
-modeled traversal costs of $2n$ and $n$ for an input of length $n$.
-
 ## Installation
 
 Install Git and follow the [official Lean installation guide](https://lean-lang.org/install/)
@@ -68,7 +64,7 @@ SameButBetter/
 SameButBetter.lean         # Library entry point importing the proofs
 lean-toolchain             # Pinned Lean version
 lakefile.toml              # Lean build configuration
-notebook.json              # Notebook metadata and content paths
+clok.json                  # CloK project identity and documentation paths
 docs/                      # Overview, local renderer, and authoring guide
 ```
 

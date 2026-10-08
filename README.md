@@ -97,3 +97,13 @@ proof files to cover it. Benchmarks and their results also belong in the snippet
 A small example, a clearer explanation, a proof, a counterexample, or a reproducible
 performance experiment is a useful contribution. A case does not need to cover
 every dimension at once. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## CloK integration
+
+`clok.json` declares this project’s documentation using [CloK protocol v1](docs/CLOK_PROTOCOL.md).
+The website reads published revisions from this repository and supplies the shared
+navigation and rendering. Run `npm run check:docs` to validate the manifest and page metadata.
+
+## License
+
+The code and documentation are licensed under [Apache-2.0](LICENSE).

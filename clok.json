@@ -1,0 +1,14 @@
+{
+  "$schema": "./docs/clok.schema.json",
+  "schemaVersion": 1,
+  "project": {
+    "slug": "same-but-better",
+    "title": "Same but better",
+    "description": "Learning notes on equivalent implementations and performance trade-offs."
+  },
+  "docs": {
+    "format": "mdx",
+    "entry": "docs/Overview.mdx",
+    "include": ["SameButBetter/**/Note.mdx", "docs/pages-content/**/*.mdx"]
+  }
+}

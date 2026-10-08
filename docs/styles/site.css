@@ -140,3 +140,5 @@ button { font: inherit; background: none; }
 .notebook-statement[data-kind="theorem"] > p:not(.notebook-statement-label), .notebook-statement[data-kind="lemma"] > p:not(.notebook-statement-label) { font-style: italic; }
 .notebook-statement[data-kind="proof"] { border-left: 0; padding-left: 0; }
 .notebook-qed { display: block; text-align: right; color: var(--text-heading); }
+
+.notebook-nav-section { margin: 1.25rem 0 .35rem; font-size: .8rem; color: var(--text-tertiary); }

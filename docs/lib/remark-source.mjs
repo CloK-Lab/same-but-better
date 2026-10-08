@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { parse } from 'yaml';
+import { readProjectDocs } from '../../tools/clok-docs-format.mjs';
+import { projectFiles } from '../../tools/project-files.mjs';
 import { fileURLToPath } from 'node:url';
 import { leanExcerpt } from './lean-excerpt.mjs';
 
@@ -9,20 +10,19 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 /** Local preview of the portable empty code-fence source convention. */
 export default function remarkSource() {
   return async (tree, file) => {
+    const project = readProjectDocs(projectFiles(root));
+    if (!project.pages.some(page => page.source === path.relative(root, file.path))) return;
     async function rewriteLink(url) {
       if (/^(?:#|\/|[a-z][a-z\d+.-]*:)/i.test(url)) return url;
       const [pathname] = url.split(/[?#]/);
-      if (!pathname.endsWith('.mdx')) return url;
+      if (!/\.mdx?$/.test(pathname)) return url;
       const target = await fs.realpath(path.resolve(path.dirname(file.path), decodeURIComponent(pathname)));
       const relative = path.relative(root, target);
       if (relative.startsWith('..') || path.isAbsolute(relative)) throw new Error(`Document link leaves the repository: ${url}`);
       const hash = url.includes('#') ? `#${url.split('#').slice(1).join('#')}` : '';
-      if (relative === 'docs/Overview.mdx') return `/${hash}`;
-      const text = await fs.readFile(target, 'utf8');
-      const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1];
-      const meta = parse(frontmatter ?? '') ?? {};
-      if (!meta.slug || meta.draft) throw new Error(`Document link targets a missing or draft page: ${url}`);
-      return `/notes/${meta.slug}/${hash}`;
+      const page = project.pages.find(page => page.source === relative);
+      if (!page) throw new Error(`Document link targets a missing or draft page: ${url}`);
+      return page.slug === 'overview' ? `/${hash}` : `/notes/${page.slug}/${hash}`;
     }
     async function walk(node) {
       if (node.type === 'link' || node.type === 'definition') node.url = await rewriteLink(node.url);

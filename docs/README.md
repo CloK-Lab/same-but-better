@@ -119,7 +119,8 @@ belong in the website and the matching local component map.
 
 ## Read on CloK
 
-`notebook.json` identifies this notebook and its overview and note directory.
+`clok.json` identifies this project, its overview, and the patterns selecting its pages.
+The [CloK protocol v1](CLOK_PROTOCOL.md) defines the shared contract with the website.
 CloK's importer reads these files from a pinned repository commit, expands source
 references, and serves them under `/docs/same-but-better`. The main website owns
 its navbar, theme, fonts, and home link. No navbar is copied into this repository.

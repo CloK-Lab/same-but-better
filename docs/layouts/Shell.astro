@@ -7,7 +7,7 @@ import '@fontsource/stix-two-text/600.css';
 import '@fontsource/ibm-plex-mono/400.css';
 import '../styles/site.css';
 import 'katex/dist/katex.min.css';
-import { notes } from '../lib/notes';
+import { notes, project } from '../lib/notes';
 interface Props { title: string; description: string; headings?: { depth: number; slug: string; text: string }[] }
 const { title, description, headings = [] } = Astro.props;
 const pages = [{ title: 'Overview', href: '/' }, ...notes];
@@ -21,16 +21,18 @@ const next = pages[current + 1];
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <title>{title} · Same but better</title>
+    <title>{title} · {project.title}</title>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class:list={["docs-layout", { "has-toc": headings.length > 0 }]}>
       <aside class="docs-sidebar">
-        <a class="project-title" href="/">Same but better</a>
+        <a class="project-title" href="/">{project.title}</a>
         <nav aria-label="Documentation">
           <a href="/" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}>Overview</a>
-          {notes.map(note => <a href={note.href} aria-current={Astro.url.pathname === note.href ? 'page' : undefined}>{note.title}</a>)}
+          {notes.map((note, index) => <div>
+            {note.section && notes[index - 1]?.section !== note.section && <p class="notebook-nav-section">{note.section}</p>}
+            <a href={note.href} aria-current={Astro.url.pathname === note.href ? 'page' : undefined}>{note.title}</a></div>)}
         </nav>
       </aside>
       <div class="notebook-reading">

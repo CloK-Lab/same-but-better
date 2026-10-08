@@ -35,6 +35,11 @@
         "description": {
           "type": "string",
           "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional project category shown in CloK Explore."
         }
       }
     },

@@ -18,10 +18,13 @@ export function projectManifest(text) {
   fields(data, ['$schema', 'schemaVersion', 'project', 'docs'], 'clok.json');
   if (data.schemaVersion !== 1) throw new Error(`Unsupported clok.json schemaVersion: ${data.schemaVersion}`);
   if (data.$schema !== undefined && typeof data.$schema !== 'string') throw new Error('Invalid $schema');
-  fields(data.project, ['slug', 'title', 'description'], 'project');
-  const { slug, title, description } = data.project;
+  fields(data.project, ['slug', 'title', 'description', 'category'], 'project');
+  const { slug, title, description, category } = data.project;
   if (typeof slug !== 'string' || !segment.test(slug) || typeof title !== 'string' || !title.trim()
       || typeof description !== 'string' || !description.trim()) throw new Error('Invalid project identity');
+  if (category !== undefined && (typeof category !== 'string' || !category.trim())) {
+    throw new Error('Invalid project category');
+  }
   fields(data.docs, ['format', 'entry', 'include'], 'docs');
   const { format, entry, include } = data.docs;
   if (format !== 'mdx' || !repositoryPath(entry) || !/\.mdx?$/.test(entry)

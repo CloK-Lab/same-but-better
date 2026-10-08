@@ -4,6 +4,7 @@
   "project": {
     "slug": "same-but-better",
     "title": "Same but better",
+    "category": "Learning code verification",
     "description": "Studying and collecting equivalent, better-performing code, with ongoing formal verification."
   },
   "docs": {

@@ -32,6 +32,10 @@ the website does not keep another copy. Unknown versions and unknown manifest
 fields fail validation. `$schema` is optional and provides editor assistance;
 the importer always uses its own validator and never downloads a supplied schema.
 
+Optional `project.category` is a nonempty label for the project's subject or
+purpose, such as `Learning code verification`. Explore displays it after `BUILD`;
+projects that omit it retain the `Documentation` label.
+
 `docs.entry` is the overview, with no frontmatter: its metadata comes from
 `project`. `docs.include` selects additional Markdown or MDX pages. Patterns
 support `*` within a filename and `**` as a whole directory segment, matching zero

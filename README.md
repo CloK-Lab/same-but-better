@@ -1,10 +1,7 @@
 # same-but-better
 
-A growing learning notebook about equivalent implementations and performance
-trade-offs, built around small programs, Lean proofs, and experiments.
-
-The same problem can have many implementations. We study when they behave the
-same, how their costs differ, and which assumptions make those conclusions hold.
+We study and collect equivalent code with better performance, developing formal
+verification alongside each example.
 
 Each case states a **specification**, gives implementations named **Version A,
 Version B, Version C, ...**, and proves their correctness before comparing costs.

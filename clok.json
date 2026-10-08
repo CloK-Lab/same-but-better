@@ -4,7 +4,7 @@
   "project": {
     "slug": "same-but-better",
     "title": "Same but better",
-    "description": "Learning notes on equivalent implementations and performance trade-offs."
+    "description": "Studying and collecting equivalent, better-performing code, with ongoing formal verification."
   },
   "docs": {
     "format": "mdx",

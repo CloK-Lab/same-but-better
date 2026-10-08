@@ -1,9 +1,80 @@
-Small code examples with notes on equivalence and performance.
+A learning notebook on equivalent implementations and their performance trade-offs.
+Each example starts with a mathematical specification, proves that its implementations
+satisfy that specification in Lean, and compares their costs under an explicit model.
+The collection grows as we study more programs and proof techniques.
 
-## Check the proofs
+Start with [Map fusion](../SameButBetter/MapFusion/Note.mdx): two successive list
+maps and a single map of the composed function produce the same output, with
+modeled traversal costs of $2n$ and $n$ for an input of length $n$.
 
-With Lean and Lake installed, run from the repository root:
+## Installation
+
+Install Git and follow the [official Lean installation guide](https://lean-lang.org/install/)
+to set up Lean and Lake. Then clone the repository:
+
+```sh
+git clone https://github.com/CloK-Lab/same-but-better.git
+cd same-but-better
+```
+
+The `lean-toolchain` file pins Lean **4.34.0**. The proofs currently use only the
+Lean standard library.
+
+## Run locally
+
+### Check the proofs
+
+From the repository root, run:
 
 ```sh
 lake build
 ```
+
+This compiles the implementations and checks the proofs. To inspect a proof
+interactively, open the repository in VS Code with the Lean 4 extension and open
+its `.lean` file.
+
+### Preview the notebook
+
+With Node.js **22.12 or newer** and npm installed, run:
+
+```sh
+npm ci
+npm run dev
+```
+
+Open `http://localhost:4321` for the standalone writing preview. When the notebook
+is read on CloK, the main website supplies the shared navigation and home link.
+
+To check the MDX and generate the static site in `dist/`, run `npm run build`.
+Use `npm run preview` to serve that build locally. The notebook and Lean proofs
+build independently.
+
+## Repository structure
+
+Each example keeps its note, implementations, and verification in one directory:
+
+```text
+SameButBetter/
+  MapFusion/
+    Note.mdx               # Mathematical explanation and source excerpts
+    README.md              # Source-level guide to the example
+    VersionA.lean          # Two successive maps
+    VersionB.lean          # One composed map
+    Verification/
+      Specification.lean   # Output requirement and uniqueness
+      Equivalence.lean     # Correctness and equality of outputs
+      Performance.lean     # Counting model and exact costs
+SameButBetter.lean         # Library entry point importing the proofs
+lean-toolchain             # Pinned Lean version
+lakefile.toml              # Lean build configuration
+notebook.json              # Notebook metadata and content paths
+docs/                      # Overview, local renderer, and authoring guide
+```
+
+`Specification.lean` states the common requirement. `Equivalence.lean` proves that
+both implementations meet it and therefore agree. `Performance.lean` defines
+counted executions and proves their costs. Code excerpts in `Note.mdx` are read
+directly from these source files.
+
+New examples follow the same layout under `SameButBetter/<CaseName>/`.

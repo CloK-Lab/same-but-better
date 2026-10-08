@@ -1,0 +1,9 @@
+---
+import Shell from '../layouts/Shell.astro';
+import { components } from '../lib/components';
+import { Content } from '../Overview.mdx';
+---
+<Shell title="Overview" description="Learning notes on equivalent implementations, Lean proofs, and performance.">
+  <h1>Same but better</h1>
+  <Content components={components} />
+</Shell>

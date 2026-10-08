@@ -1,0 +1,9 @@
+---
+const { kind = 'theorem', number, title } = Astro.props;
+const label = kind.charAt(0).toUpperCase() + kind.slice(1);
+---
+<section class="notebook-statement" data-kind={kind} aria-label={`${label}${number ? ` ${number}` : ''}${title ? ` (${title})` : ''}`}>
+  <p class="notebook-statement-label"><strong>{label}{number && ` ${number}`}{title && ` (${title})`}.</strong></p>
+  <slot />
+  {kind === 'proof' && <span class="notebook-qed" aria-label="End of proof">□</span>}
+</section>

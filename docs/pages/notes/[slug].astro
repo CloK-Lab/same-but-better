@@ -1,0 +1,15 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import { components } from '../../lib/components';
+import { notes } from '../../lib/notes';
+export function getStaticPaths() {
+  return notes.map(note => ({ params: { slug: note.slug }, props: { note } }));
+}
+const { note } = Astro.props;
+const { Content, getHeadings } = note.module;
+const headings = getHeadings().filter(h => h.depth === 2 || h.depth === 3);
+---
+<Shell title={note.title} description={note.description} headings={headings}>
+  <h1>{note.title}</h1>
+  <Content components={components} />
+</Shell>

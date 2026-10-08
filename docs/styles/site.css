@@ -1,0 +1,142 @@
+/* Matches the semantic palette and typography roles in Clok-Website/src/site.
+   Kept local so this notebook builds without a sibling checkout. */
+:root {
+  color-scheme: dark;
+  --surface-base: #0a0a0f;
+  --surface-panel: #111118;
+  --text-body: #ededed;
+  --text-heading: #e3f2fc;
+  --text-primary: #f5f5f7;
+  --text-secondary: #b8b8bf;
+  --text-tertiary: #8e8e93;
+  --border-subtle: #34343a;
+  --accent-primary: #79b8db;
+  --brand-steel-blue: #669aba;
+  --status-warning: #facc15;
+  --status-success: #4ade80;
+  --surface-control: #1c1c22;
+  --font-display: 'Jost', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-ui: var(--font-display);
+  --font-reading: 'STIX Two Text', 'Cambria Math', Georgia, serif;
+  --font-code: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+html.light {
+  color-scheme: light;
+  --surface-base: #f7f7fa;
+  --surface-panel: #fff;
+  --text-body: #29292f;
+  --text-heading: #213b52;
+  --text-primary: #17171c;
+  --text-secondary: #4f4f58;
+  --text-tertiary: #686872;
+  --border-subtle: #c7c7cf;
+  --accent-primary: #006b96;
+  --brand-steel-blue: #006b96;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface-base); color: var(--text-body); font-family: var(--font-ui); }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--accent-primary); }
+:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 5px; }
+::selection { background: #fbf0d9; color: #0a0a0f; }
+h1, h2, h3, p, figure { margin: 0; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; color: var(--text-heading); }
+.skip-link { position: fixed; left: 1rem; top: -6rem; padding: 1rem; background: var(--surface-panel); z-index: 10; }
+.skip-link:focus { top: 1rem; }
+.docs-layout { display: grid; grid-template-columns: 12rem minmax(0, 44rem); gap: 4rem; justify-content: center; }
+.docs-layout.has-toc { grid-template-columns: 10rem minmax(0, 42rem) 11rem; gap: 2.5rem; }
+.notebook-reading { min-width: 0; }
+.notebook-toc { position: sticky; top: 6rem; align-self: start; max-height: calc(100vh - 8rem); overflow-y: auto; font-family: var(--font-ui); font-size: .875rem; }
+.notebook-toc > p { color: var(--text-heading); margin-bottom: 1rem; }
+.notebook-toc-links { display: flex; flex-direction: column; gap: .75rem; color: var(--text-tertiary); }
+.notebook-toc-links [data-depth="3"] { padding-left: .8rem; }
+.notebook-toc-links [aria-current], .notebook-toc-links a:hover { color: var(--accent-primary); }
+.notebook-mobile-toc { display: none; }
+.docs-sidebar { position: sticky; top: 6rem; align-self: start; font-family: var(--font-ui); font-size: 1rem; }
+.notebook-title { display: block; margin-bottom: 1.5rem; color: var(--text-heading); }
+.docs-sidebar nav { display: flex; flex-direction: column; gap: .75rem; color: var(--text-secondary); }
+.docs-sidebar a:hover, .docs-sidebar [aria-current] { color: var(--accent-primary); }
+.prose { min-width: 0; font-family: var(--font-reading); font-size: 1.125rem; line-height: 1.8; color: var(--text-secondary); overflow-wrap: anywhere; }
+.prose h1 { font-size: 2rem; line-height: 1.25; margin-bottom: 1.5rem; }
+.prose h2 { font-size: 1.65rem; margin: 2.5rem 0 1rem; line-height: 1.3; }
+.prose :is(h1,h2,h3) { color: var(--text-heading); font-weight: 400; scroll-margin-top: 5rem; }
+.prose :is(p,ul,ol) { margin: 1rem 0; }
+.prose ul { list-style: disc; padding-left: 1.5rem; }
+.prose ol { list-style: decimal; padding-left: 1.5rem; }
+.prose a { color: var(--accent-primary); text-decoration: underline; text-underline-offset: 4px; }
+.prose code { font-family: var(--font-code); font-size: .8em; }
+.prose pre { background: var(--surface-code); color: #ededed; border: 1px solid var(--border-subtle); padding: 1.25rem; margin: 1.5rem 0; overflow-x: auto; line-height: 1.7; }
+.prose blockquote { border-left: 2px solid var(--accent-primary); margin: 2rem 0; padding-left: 1.25rem; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 1rem; }
+.prose :is(th,td) { text-align: left; border-bottom: 1px solid var(--border-subtle); padding: .7rem .8rem .7rem 0; }
+.prose summary { cursor: pointer; }
+.prose h3 { font-size: 1.3rem; margin: 2rem 0 1rem; }
+.prose h4 { font-size: 1.1rem; margin: 1.5rem 0 .75rem; }
+.prose .notebook-heading-link { color: inherit; text-decoration: none; }
+.notebook-heading-link > span { opacity: 0; color: var(--accent-primary); }
+.notebook-heading-link:hover > span, .notebook-heading-link:focus-visible > span { opacity: 1; }
+.prose img { display: block; max-width: 100%; height: auto; margin: 1.5rem auto; }
+.prose .katex-display { overflow-x: auto; overflow-y: hidden; padding: .5rem 0; }
+.notebook-table { overflow-x: auto; margin: 1.5rem 0; }
+.prose .notebook-code { margin: 1.5rem 0; border: 1px solid var(--border-subtle); }
+.notebook-code figcaption { display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: var(--surface-panel); color: var(--text-secondary); padding: .55rem 1rem; font: .8rem var(--font-code); border-bottom: 1px solid var(--border-subtle); }
+.notebook-copy { border: 1px solid var(--border-subtle); border-radius: 3px; padding: .35rem .6rem; color: var(--text-secondary); cursor: pointer; }
+.notebook-copy:hover { color: var(--accent-primary); border-color: var(--accent-primary); }
+.prose .notebook-code pre { margin: 0; border: 0; padding: 1rem 0; }
+.notebook-code pre code { counter-reset: line; display: block; min-width: max-content; }
+.notebook-code .line { display: inline-block; width: 100%; padding: 0 1rem 0 0; }
+.notebook-code .line::before { counter-increment: line; content: counter(line); display: inline-block; width: 3rem; padding-right: 1rem; text-align: right; color: #7d8590; user-select: none; }
+.notebook-code .line.highlighted { background: #223844; box-shadow: inset 2px 0 #79b8db; }
+.notebook-callout { margin: 1.5rem 0; padding: .25rem 1.25rem; border-left: 3px solid var(--accent-primary); background: var(--surface-panel); }
+.notebook-callout[data-type="warning"] { border-color: var(--status-warning); }
+.notebook-callout[data-type="tip"] { border-color: var(--status-success); }
+.notebook-callout-title { font-family: var(--font-ui); color: var(--text-heading); }
+.notebook-tabs { margin: 1.5rem 0; border: 1px solid var(--border-subtle); }
+.notebook-tabs [role="tablist"] { display: flex; overflow-x: auto; border-bottom: 1px solid var(--border-subtle); font-family: var(--font-ui); font-size: 1rem; }
+.notebook-tabs [role="tab"] { padding: .65rem 1rem; white-space: nowrap; border-bottom: 2px solid transparent; cursor: pointer; }
+.notebook-tabs [role="tab"][aria-selected="true"] { color: var(--accent-primary); border-bottom-color: var(--accent-primary); }
+.notebook-tabs [role="tabpanel"] { padding: .25rem 1rem; }
+.notebook-tabs [hidden] { display: none; }
+.notebook-steps { counter-reset: step; border-left: 1px solid var(--border-subtle); margin-left: .8rem; }
+.notebook-step { position: relative; padding: .1rem 0 .75rem 1.5rem; }
+.notebook-step::before { counter-increment: step; content: counter(step); position: absolute; left: -.8rem; top: 1.85rem; width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border-radius: 50%; background: var(--surface-control); color: var(--text-secondary); font: .8rem var(--font-code); }
+.notebook-badge { display: inline-block; padding: .05rem .5rem; border: 1px solid var(--border-subtle); font: .8rem/1.6 var(--font-ui); color: var(--accent-primary); vertical-align: middle; }
+.notebook-pagination { display: flex; justify-content: space-between; gap: 2rem; border-top: 1px solid var(--border-subtle); margin-top: 3rem; padding-top: 1.5rem; font-family: var(--font-ui); }
+.notebook-pagination a { color: var(--text-heading); }
+.notebook-pagination a:last-child { text-align: right; }
+.notebook-pagination span { display: block; color: var(--text-tertiary); font-size: .875rem; margin-bottom: .4rem; }
+.docs-layout :focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+@media (max-width: 1279px) {
+  .docs-layout.has-toc { grid-template-columns: 11rem minmax(0, 44rem); }
+  .notebook-toc { display: none; }
+  .notebook-mobile-toc { display: block; margin-bottom: 2rem; color: var(--text-secondary); font-family: var(--font-ui); }
+  .notebook-mobile-toc summary { cursor: pointer; padding: .5rem 0; }
+  .notebook-mobile-toc nav { margin-top: 1rem; }
+}
+@media (max-width: 760px) {
+  .docs-layout, .docs-layout.has-toc { display: block; }
+  .docs-sidebar { position: static; margin-bottom: 2.5rem; }
+  .docs-sidebar nav { flex-direction: row; flex-wrap: wrap; gap: 1rem; }
+}
+
+.docs-layout { max-width: 1320px; margin: auto; padding: 3rem 2rem 5rem; }
+.notebook-toc, .docs-sidebar { top: 2rem; }
+button { font: inherit; background: none; }
+.notebook-tabs [role="tab"] { border-top: 0; border-left: 0; border-right: 0; color: inherit; }
+@media (max-width: 760px) { .docs-layout { padding: 1.5rem; } }
+
+/* The code surface toggles a faded preview without a separate control. */
+.notebook-code-preview { margin: 1.5rem 0; scroll-margin-top: 6rem; }
+.notebook-code-preview .notebook-preview-title { margin: 0 0 .65rem; font: 1rem var(--font-ui); color: var(--text-heading); }
+.notebook-preview-frame { position: relative; border: 1px solid var(--border-subtle); background: #24292e; }
+.notebook-preview-content .notebook-code { margin: 0; border: 0; }
+.notebook-code-preview[data-expanded="false"] .notebook-preview-content { max-height: 16rem; overflow: hidden; mask-image: linear-gradient(to bottom, #000 55%, transparent 100%); }
+.notebook-code-preview[data-expanded="false"] .notebook-preview-frame { cursor: zoom-in; }
+.notebook-code-preview[data-expanded="true"] .notebook-preview-frame { cursor: zoom-out; }
+.notebook-preview-frame:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+
+.notebook-statement { margin: 1.75rem 0; padding: .1rem 0 .1rem 1.25rem; border-left: 2px solid var(--border-subtle); }
+.notebook-statement .notebook-statement-label { margin: .5rem 0; color: var(--text-heading); font-style: normal; }
+.notebook-statement[data-kind="theorem"] > p:not(.notebook-statement-label), .notebook-statement[data-kind="lemma"] > p:not(.notebook-statement-label) { font-style: italic; }
+.notebook-statement[data-kind="proof"] { border-left: 0; padding-left: 0; }
+.notebook-qed { display: block; text-align: right; color: var(--text-heading); }

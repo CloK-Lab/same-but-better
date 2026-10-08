@@ -1,0 +1,9 @@
+---
+const { title = 'Code' } = Astro.props;
+---
+<div class="notebook-code-preview" data-code-preview>
+  <p class="notebook-preview-title">{title}</p>
+  <div class="notebook-preview-frame" data-title={title}>
+    <div class="notebook-preview-content"><slot /></div>
+  </div>
+</div>

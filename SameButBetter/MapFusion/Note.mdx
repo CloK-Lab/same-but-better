@@ -1,0 +1,244 @@
+---
+title: "Map fusion"
+description: "A common specification, two implementations, and a traversal cost comparison."
+slug: map-fusion
+order: 1
+topic: Lists & transformations
+---
+
+## Specification
+
+Let $f : \alpha \to \beta$ and $g : \beta \to \gamma$ be pure functions.
+Write $\varepsilon$ for the empty list, $a::x$ for prepending $a$ to $x$,
+and $|x|$ for the length of $x$.
+
+\begin{definition}[Output specification]
+
+For finite lists $x=[x_1,\ldots,x_n]\in\operatorname{List}(\alpha)$ and
+$y\in\operatorname{List}(\gamma)$, the **specification predicate**
+$\mathcal{S}_{f,g}(x,y)$ means that $y$ preserves the length and order of $x$
+and replaces each element $x_i$ with $g(f(x_i))$:
+
+$$
+\mathcal{S}_{f,g}(x,y)
+\overset{\mathrm{def}}{=}
+\Bigl(|y| = |x| \;\land\; \forall i \in \{1,\ldots,n\},\; y_i = g(f(x_i))\Bigr).
+$$
+
+In Lean, `Specification f g xs ys` expresses this relation inductively:
+`nil` relates the two empty lists, and `cons` relates their corresponding heads
+and tails. Here `xs` and `ys` denote $x$ and $y$.
+
+```lean4 file="./Verification/Specification.lean" declaration="Specification"
+```
+
+\end{definition}
+
+## Example
+
+Take $\alpha=\beta=\gamma=\mathbb{N}$, $f(t)=t+1$, $g(t)=2t$, and
+$x=[1,2,3]$. The required output is $y=[4,6,8]$. The two implementations
+compute it as follows:
+
+$$
+\begin{aligned}
+\text{Version A:}\quad &[1,2,3]
+  \xrightarrow{\operatorname{map}(f)}[2,3,4]
+  \xrightarrow{\operatorname{map}(g)}[4,6,8],\\
+\text{Version B:}\quad &[1,2,3]
+  \xrightarrow{\operatorname{map}(g\circ f)}[4,6,8].
+\end{aligned}
+$$
+
+## Implementations and correctness
+
+Version A uses two maps; Version B composes the functions within one map:
+
+$$
+A_{f,g}(x) = \operatorname{map}(g,\operatorname{map}(f,x)),
+\qquad
+B_{f,g}(x) = \operatorname{map}(g\circ f,x).
+$$
+
+<Tabs labels={["Version A", "Version B"]}>
+<Tab>
+
+```lean4 file="./VersionA.lean" declaration="versionA"
+```
+
+</Tab>
+<Tab>
+
+```lean4 file="./VersionB.lean" declaration="versionB"
+```
+
+</Tab>
+</Tabs>
+
+\begin{theorem}[Correctness and equivalence]
+
+For every $x\in\operatorname{List}(\alpha)$, both implementations satisfy the
+specification and produce the same output:
+
+$$
+\mathcal{S}_{f,g}(x,A_{f,g}(x))
+\;\land\;
+\mathcal{S}_{f,g}(x,B_{f,g}(x)),
+\qquad A_{f,g}(x)=B_{f,g}(x).
+$$
+
+\end{theorem}
+
+\begin{proof}
+
+**Satisfaction.** Induction on $x$ proves `versionA_correct` and
+`versionB_correct`. The empty case uses `Specification.nil`; the nonempty case
+uses `Specification.cons` and the induction hypothesis.
+
+<Tabs labels={["Version A correctness", "Version B correctness"]}>
+<Tab>
+
+<CodePreview title="versionA_correct">
+
+```lean4 file="./Verification/Equivalence.lean" declaration="versionA_correct"
+```
+
+</CodePreview>
+
+</Tab>
+<Tab>
+
+<CodePreview title="versionB_correct">
+
+```lean4 file="./Verification/Equivalence.lean" declaration="versionB_correct"
+```
+
+</CodePreview>
+
+</Tab>
+</Tabs>
+
+**Uniqueness.** The specification determines one output:
+
+$$
+\bigl(\mathcal{S}_{f,g}(x,y)\land\mathcal{S}_{f,g}(x,z)\bigr)
+\Rightarrow y=z.
+$$
+
+<CodePreview title="Specification.unique">
+
+```lean4 file="./Verification/Specification.lean" declaration="Specification.unique"
+```
+
+</CodePreview>
+
+**Equivalence.** Apply uniqueness to the two satisfaction proofs:
+
+```lean4 file="./Verification/Equivalence.lean" declaration="versionA_eq_versionB"
+```
+
+\end{proof}
+
+## Traversal cost
+
+\begin{definition}[Traversal cost]
+
+Assign one unit of cost to each nonempty list cell visited by a map:
+
+$$
+C_{\mathrm{map}}(\varepsilon)\overset{\mathrm{def}}{=}0,\qquad
+C_{\mathrm{map}}(a::x)\overset{\mathrm{def}}{=}1+C_{\mathrm{map}}(x).
+$$
+
+`countedMap f xs` returns a pair $(\text{output},\text{cost})$.
+Its second component implements this recurrence: zero for `[]`, and
+`cost + 1` for `x :: xs`.
+
+```lean4 file="./Verification/Performance.lean" declaration="countedMap"
+```
+
+The counted executions `versionACounted` and `versionBCounted` follow the two
+implementations. A adds the costs of its two maps; B counts one composed map.
+
+<Tabs labels={["Counted A", "Counted B"]}>
+<Tab>
+
+```lean4 file="./Verification/Performance.lean" declaration="versionACounted"
+```
+
+</Tab>
+<Tab>
+
+```lean4 file="./Verification/Performance.lean" declaration="versionBCounted"
+```
+
+</Tab>
+</Tabs>
+
+Write $\pi_2$ for the second component of a pair (`.2` in Lean). The costs below
+refer precisely to these executions:
+
+$$
+\begin{aligned}
+C_A(x)&\overset{\mathrm{def}}{=}\pi_2(\mathtt{versionACounted}\;f\;g\;x),\\
+C_B(x)&\overset{\mathrm{def}}{=}\pi_2(\mathtt{versionBCounted}\;f\;g\;x).
+\end{aligned}
+$$
+
+\end{definition}
+
+\begin{lemma}[One map]
+
+A counted map returns the ordinary map result and visits exactly $|x|$ cells:
+
+$$
+\mathtt{countedMap}\;f\;x=(\operatorname{map}(f,x),|x|).
+$$
+
+\end{lemma}
+
+\begin{proof}
+Induction on $x$: the empty case has cost zero; the nonempty case adds one visit.
+This is `countedMap_spec`:
+
+<CodePreview title="countedMap_spec">
+
+```lean4 file="./Verification/Performance.lean" declaration="countedMap_spec"
+```
+
+</CodePreview>
+
+\end{proof}
+
+\begin{theorem}[Exact traversal costs]
+
+The counted executions preserve the original outputs and record their costs:
+
+$$
+\begin{aligned}
+\mathtt{versionACounted}\;f\;g\;x&=(A_{f,g}(x),2|x|),\\
+\mathtt{versionBCounted}\;f\;g\;x&=(B_{f,g}(x),|x|).
+\end{aligned}
+$$
+
+In particular, $C_A(x)=2|x|$ and $C_B(x)=|x|$.
+
+\end{theorem}
+
+\begin{proof}
+Apply `countedMap_spec` twice for A and once for B. Mapping preserves list length.
+The two conjuncts of `implementation_costs` are exactly the two equalities above:
+
+<CodePreview title="implementation_costs">
+
+```lean4 file="./Verification/Performance.lean" declaration="implementation_costs"
+```
+
+</CodePreview>
+
+\end{proof}
+
+For $n=|x|$, these counts imply $C_A(x)-C_B(x)=n$ and $C_B(x)\le C_A(x)$,
+with strict inequality exactly when $n>0$. Both have $\Theta(n)$ traversal cost.
+The model excludes function evaluation, allocation, and compiler optimizations;
+it counts list-cell visits, not measured runtime or memory usage.

@@ -1,13 +1,36 @@
 # same-but-better
 
-Exploring equivalent implementations and performance trade-offs through small examples, Lean proofs, and benchmarks.
+A growing learning notebook about equivalent implementations and performance
+trade-offs, built around small programs, Lean proofs, and experiments.
 
 The same problem can have many implementations. We study when they behave the
 same, how their costs differ, and which assumptions make those conclusions hold.
 
-Each case brings code, explanation, proofs, and experiments together. Topics can
-include algorithms, data processing, and frontend interactions. Start with one
-clear example and grow the collection gradually.
+Each case states a **specification**, gives implementations named **Version A,
+Version B, Version C, ...**, and proves their correctness before comparing costs.
+Source files and the explanatory note share one folder. Version letters identify
+alternatives; they do not imply a ranking.
+
+## Read and write the notebook
+
+The reading site uses MDX. Each case keeps its `Note.mdx` next to the Lean source;
+the site discovers notes automatically and renders imported source files directly.
+The first entry is [Map fusion](SameButBetter/MapFusion/Note.mdx).
+
+With Node.js 22.12 or newer, run:
+
+```sh
+npm ci
+npm run dev
+```
+
+Open `http://localhost:4321`. `npm run build` checks the site and generates static
+files in `dist/`; `npm run preview` previews that build locally. Building the
+notebook does not require Lean, and building the proofs does not require Node.js.
+
+See [the notebook authoring guide](docs/README.md) to add an entry. The site follows
+the local CloK website's palette, typography, and reading layout, with self-hosted
+fonts and no dependency on that checkout.
 
 ## Getting started
 
@@ -17,18 +40,19 @@ Install [elan, the Lean toolchain manager](https://github.com/leanprover/elan#in
 git clone https://github.com/CloK-Lab/same-but-better.git
 cd same-but-better
 lake build
-lake exe demo
 ```
 
 The project pins **Lean 4.34.0** and currently uses only the Lean standard library.
-`lake build` compiles the implementations, checks the proofs, and builds the demo.
+`lake build` compiles the implementations and checks the specification and proofs.
 To explore proofs interactively, open this directory in VS Code with the Lean 4 extension.
 
 ## Cases
 
-| Case | Equivalence | Cost result | Runtime measurements |
-| --- | --- | --- | --- |
-| [Map fusion: two traversals into one](examples/map-fusion/README.md) | Proved for all finite lists and pure functions | Proved: abstract list-cell visits drop from `2n` to `n` | Not yet measured; `demo` only displays modeled counts |
+| Snippet | Version A | Version B | Equivalence proof | Performance proof |
+| --- | --- | --- | --- | --- |
+| [Map fusion](SameButBetter/MapFusion/README.md) | [Two passes](SameButBetter/MapFusion/VersionA.lean) | [One pass](SameButBetter/MapFusion/VersionB.lean) | [A = B for finite lists and pure functions](SameButBetter/MapFusion/Verification/Equivalence.lean) | [List-cell visits: A = `2n`, B = `n`](SameButBetter/MapFusion/Verification/Performance.lean) |
+
+Map fusion currently has two versions. Runtime and memory use have not yet been measured.
 
 “Better” depends on the metric and the assumptions. One implementation may run
 faster while another uses less memory. Some improvements only pay off at certain
@@ -36,11 +60,11 @@ input sizes. Each case should explain these trade-offs.
 
 ## Reading a case
 
-1. Read the problem and compare the implementations.
-2. Check the scope of equivalence: which behavior is compared, and under what assumptions?
-3. Follow the Lean proof and the connection between the model and the implementation.
-4. Inspect the cost model: what does it count, and what does it leave out?
-5. If benchmarks are available, check the commands, inputs, environment, and raw results.
+1. Read the mathematical specification in `Note.mdx` and its definition in `Verification/Specification.lean`.
+2. Compare `VersionA.lean`, `VersionB.lean`, and any additional versions.
+3. Read `Verification/Equivalence.lean`: each implementation satisfies the specification, yielding equal outputs.
+4. Read `Verification/Performance.lean`: the cost model, its correspondence to the implementations, and the comparison proofs.
+5. Run `lake build` to check the proofs.
 
 We distinguish **proved claims, measured observations, and open questions**.
 A proof about operation counts is not a proof about elapsed time on real hardware.
@@ -51,12 +75,22 @@ equivalence between programs written in another language.
 
 ```text
 SameButBetter/
-  Cases/MapFusion/Basic.lean   # Implementations, counted executions, and proofs
-SameButBetter.lean            # Case library entry point
-Main.lean                     # Runnable cost-model demo
-examples/map-fusion/README.md # Case explanation
-CONTRIBUTING.md               # How to add a case
+  MapFusion/               # One folder per code snippet
+    README.md              # Problem, version comparison, and conclusions
+    Note.mdx               # Learning note, with live source imports
+    VersionA.lean          # A: two passes
+    VersionB.lean          # B: one fused pass
+    Verification/
+      Specification.lean   # Required output and uniqueness
+      Equivalence.lean     # Correctness and equivalence
+      Performance.lean     # Cost model and proofs
+SameButBetter.lean           # Imports the proofs for all snippets
+CONTRIBUTING.md              # How to add a snippet or a version
+docs/                        # MDX site layouts, components, and authoring guide
 ```
+
+Add `VersionC.lean` when a snippet has a third implementation, and extend both
+proof files to cover it. Benchmarks and their results also belong in the snippet folder.
 
 ## Contributing
 

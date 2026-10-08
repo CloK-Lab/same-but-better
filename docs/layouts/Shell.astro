@@ -1,0 +1,48 @@
+---
+import '@fontsource/jost/400.css';
+import '@fontsource/jost/500.css';
+import '@fontsource/stix-two-text/400.css';
+import '@fontsource/stix-two-text/400-italic.css';
+import '@fontsource/stix-two-text/600.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '../styles/site.css';
+import 'katex/dist/katex.min.css';
+import { notes } from '../lib/notes';
+interface Props { title: string; description: string; headings?: { depth: number; slug: string; text: string }[] }
+const { title, description, headings = [] } = Astro.props;
+const pages = [{ title: 'Overview', href: '/' }, ...notes];
+const current = pages.findIndex(page => page.href === Astro.url.pathname);
+const previous = pages[current - 1];
+const next = pages[current + 1];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title} · Same but better</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class:list={["docs-layout", { "has-toc": headings.length > 0 }]}>
+      <aside class="docs-sidebar">
+        <a class="project-title" href="/">Same but better</a>
+        <nav aria-label="Documentation">
+          <a href="/" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}>Overview</a>
+          {notes.map(note => <a href={note.href} aria-current={Astro.url.pathname === note.href ? 'page' : undefined}>{note.title}</a>)}
+        </nav>
+      </aside>
+      <div class="notebook-reading">
+        {headings.length > 0 && <details class="notebook-mobile-toc"><summary>On this page</summary><nav class="notebook-toc-links" aria-label="Article sections">{headings.map(h => <a href={`#${h.slug}`} data-depth={h.depth}>{h.text}</a>)}</nav></details>}
+        <main id="main" class="prose"><slot /></main>
+        <nav class="notebook-pagination" aria-label="Previous and next pages">
+          {previous ? <a href={previous.href}><span>Previous</span>{previous.title}</a> : <span />}
+          {next && <a href={next.href}><span>Next</span>{next.title}</a>}
+        </nav>
+      </div>
+      {headings.length > 0 && <aside class="notebook-toc"><p>On this page</p><nav class="notebook-toc-links" aria-label="On this page">{headings.map(h => <a href={`#${h.slug}`} data-depth={h.depth}>{h.text}</a>)}</nav></aside>}
+    </div>
+    <script>import '../lib/enhance';</script>
+  </body>
+</html>

@@ -1,0 +1,4 @@
+---
+const { labels = [], defaultIndex = 0 } = Astro.props;
+---
+<div class="notebook-tabs" data-tabs data-labels={JSON.stringify(labels)} data-default-index={defaultIndex}><slot /></div>

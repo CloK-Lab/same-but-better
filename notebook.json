@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "slug": "same-but-better",
+  "title": "Same but better",
+  "description": "Learning notes on equivalent implementations and performance trade-offs.",
+  "notes": "SameButBetter",
+  "overview": "docs/Overview.mdx"
+}

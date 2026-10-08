@@ -1,0 +1,6 @@
+---
+const { title, type = 'note' } = Astro.props;
+---
+<aside class="notebook-callout" data-type={type}>
+  {title && <p class="notebook-callout-title">{title}</p>}<slot />
+</aside>

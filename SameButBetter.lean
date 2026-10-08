@@ -1,1 +1,2 @@
-import SameButBetter.Cases.MapFusion.Basic
+import SameButBetter.MapFusion.Verification.Equivalence
+import SameButBetter.MapFusion.Verification.Performance

@@ -1,0 +1,13 @@
+name = "same-but-better"
+version = "0.1.0"
+defaultTargets = ["SameButBetter", "demo"]
+
+[leanOptions]
+warningAsError = true
+
+[[lean_lib]]
+name = "SameButBetter"
+
+[[lean_exe]]
+name = "demo"
+root = "Main"

@@ -1,16 +1,17 @@
 # same-but-better
 
-通过可运行的小案例、Lean 证明和性能实验，探索代码等价性与性能取舍。
+Exploring equivalent implementations and performance trade-offs through small examples, Lean proofs, and benchmarks.
 
-同一个问题，不同的实现。我们从小案例出发，学习哪些代码具有相同的行为、
-它们的成本有何不同，以及这些结论在什么条件下成立。
+The same problem can have many implementations. We study when they behave the
+same, how their costs differ, and which assumptions make those conclusions hold.
 
-每个案例把实现、解释、证明和实验放在一起。算法、数据处理、前端交互都可以成为题材；
-从一个讲清楚的例子开始，慢慢积累。
+Each case brings code, explanation, proofs, and experiments together. Topics can
+include algorithms, data processing, and frontend interactions. Start with one
+clear example and grow the collection gradually.
 
-## 开始
+## Getting started
 
-安装 [Lean 工具链管理器 elan](https://github.com/leanprover/elan#installation) 后：
+Install [elan, the Lean toolchain manager](https://github.com/leanprover/elan#installation), then run:
 
 ```sh
 git clone https://github.com/CloK-Lab/same-but-better.git
@@ -19,41 +20,46 @@ lake build
 lake exe demo
 ```
 
-项目固定使用 **Lean 4.34.0**，目前只依赖 Lean 标准库。`lake build` 会编译实现、
-检查证明并构建演示程序。也可以安装 VS Code 的 Lean 4 扩展，打开本目录逐步阅读证明。
+The project pins **Lean 4.34.0** and currently uses only the Lean standard library.
+`lake build` compiles the implementations, checks the proofs, and builds the demo.
+To explore proofs interactively, open this directory in VS Code with the Lean 4 extension.
 
-## 案例
+## Cases
 
-| 案例 | 等价性 | 成本结论 | 实际性能实验 |
+| Case | Equivalence | Cost result | Runtime measurements |
 | --- | --- | --- | --- |
-| [两次 map 合并为一次](examples/map-fusion/README.md) | 已证明：所有有限列表、纯函数的结果相同 | 已证明：模型中的列表节点访问次数由 `2n` 降为 `n` | 尚未测量；`demo` 只展示成本计数 |
+| [Map fusion: two traversals into one](examples/map-fusion/README.md) | Proved for all finite lists and pure functions | Proved: abstract list-cell visits drop from `2n` to `n` | Not yet measured; `demo` only displays modeled counts |
 
-“更好”总是相对于某个指标和前提。一个版本可能更快，另一个更省内存；
-某项优化也可能只在特定输入规模下有收益。案例应把这些差别写清楚。
+“Better” depends on the metric and the assumptions. One implementation may run
+faster while another uses less memory. Some improvements only pay off at certain
+input sizes. Each case should explain these trade-offs.
 
-## 怎么读一个案例
+## Reading a case
 
-1. 看问题和两种实现。
-2. 看等价性的范围：比较什么行为，输入和环境有什么前提。
-3. 读 Lean 证明，以及形式化模型与实现的对应关系。
-4. 看成本模型：统计哪些操作，哪些成本没有包括。
-5. 如有性能基准测试，查看命令、输入、环境和原始结果。
+1. Read the problem and compare the implementations.
+2. Check the scope of equivalence: which behavior is compared, and under what assumptions?
+3. Follow the Lean proof and the connection between the model and the implementation.
+4. Inspect the cost model: what does it count, and what does it leave out?
+5. If benchmarks are available, check the commands, inputs, environment, and raw results.
 
-**已证明、实测观察、尚待验证**会分别标注。操作次数的证明不等于真实机器上的耗时证明；
-两个 Lean 模型等价，也不自动证明对应的外部语言程序等价。
+We distinguish **proved claims, measured observations, and open questions**.
+A proof about operation counts is not a proof about elapsed time on real hardware.
+Equivalence between two Lean models also does not automatically establish
+equivalence between programs written in another language.
 
-## 目录
+## Structure
 
 ```text
 SameButBetter/
-  Cases/MapFusion/Basic.lean   # 两种实现、计数执行及证明
-SameButBetter.lean            # 案例库入口
-Main.lean                     # 可运行的成本计数演示
-examples/map-fusion/README.md # 案例讲解
-CONTRIBUTING.md               # 如何补充案例
+  Cases/MapFusion/Basic.lean   # Implementations, counted executions, and proofs
+SameButBetter.lean            # Case library entry point
+Main.lean                     # Runnable cost-model demo
+examples/map-fusion/README.md # Case explanation
+CONTRIBUTING.md               # How to add a case
 ```
 
-## 一起补充
+## Contributing
 
-欢迎贡献一个小例子、一段更清楚的解释、一份证明、一个反例或可复现的性能实验。
-不需要一次覆盖所有维度。见 [贡献说明](CONTRIBUTING.md)。
+A small example, a clearer explanation, a proof, a counterexample, or a reproducible
+performance experiment is a useful contribution. A case does not need to cover
+every dimension at once. See [CONTRIBUTING.md](CONTRIBUTING.md).

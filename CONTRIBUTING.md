@@ -1,26 +1,31 @@
-# 补充一个小案例
+# Contributing a small case
 
-一个清楚、可复现的小案例就值得提交。也欢迎补充现有案例的解释、反例和实验。
+A clear, reproducible example is enough to contribute. Improvements to existing
+explanations, counterexamples, and experiments are welcome too.
 
-## 最小内容
+Write project documentation in English.
 
-- **问题与实现**：代码要做什么，两种写法分别是什么。
-- **等价范围**：比较什么行为，有哪些前提或边界条件。
-- **证据**：Lean 证明、性能实验，或明确标出的待验证问题。
-- **成本与取舍**：统计什么指标，省了什么，是否增加了其他成本。
-- **复现方式**：运行命令、所需环境，以及预期结果。
+## What to include
 
-题材不限于 UI；也不要求每个案例都以性能提升为结论。反例和失败的优化同样有用。
+- **Problem and implementations:** What should the code do, and what are the alternatives?
+- **Equivalence scope:** Which behavior is compared? What assumptions and edge cases matter?
+- **Evidence:** Lean proofs, performance experiments, or clearly labeled open questions.
+- **Costs and trade-offs:** Which metric improves? Does another cost increase?
+- **Reproduction:** Commands, environment requirements, and expected results.
 
-## 放在哪里
+Cases can cover more than UI code. An optimization that fails, or a counterexample
+to a proposed equivalence, can be just as useful as a successful improvement.
 
-- Lean 实现与证明：`SameButBetter/Cases/<CaseName>/`。
-- 案例讲解与实验材料：`examples/<case-name>/`。
-- 将可编译的案例导入 `SameButBetter.lean`，并添加到 README 的案例表。
+## Where things go
 
-初期直接参考 `MapFusion` 的结构即可，不必先提炼通用框架或引入新依赖。
+- Lean implementations and proofs: `SameButBetter/Cases/<CaseName>/`.
+- Explanations and experiment materials: `examples/<case-name>/`.
+- Import compilable cases in `SameButBetter.lean` and add them to the README case table.
 
-## 提交前
+Use `MapFusion` as a starting point. Keep each case small; a general framework or
+new dependency is not required to contribute an example.
+
+## Before submitting
 
 ```sh
 lake build
@@ -28,9 +33,13 @@ lake exe demo
 git diff --check
 ```
 
-已收录的 Lean 证明需要完整通过检查，不使用证明占位符或把待证结论声明成公理。
-尚未完成的推导可以先写在案例文档或 issue 中，标为“尚待验证”。
+Included Lean proofs must pass checking without proof placeholders or axioms that
+assume the claim being proved. Unfinished arguments can live in case notes or an
+issue, clearly marked as open questions.
 
-报告性能时，区分模型中的操作计数与实测耗时。实测结果应附命令、输入、
-工具链与硬件信息；不要把一次测试外推为所有环境下的保证。
-如果 Lean 验证的是外部代码的模型，请说明两者如何对应，哪些联系仍未被证明。
+Distinguish modeled operation counts from measured runtime. Measurements should
+include commands, inputs, toolchain, and hardware details. Do not generalize one
+measurement into a guarantee for every environment.
+
+If Lean verifies a model of external code, explain the correspondence and identify
+any connections that have not been proved.

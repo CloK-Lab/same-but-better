@@ -1,76 +1,81 @@
-# 001 · 两次 map 合并为一次
+# 001 · Map fusion: two traversals into one
 
-给列表中的每个元素先应用 `f`，再应用 `g`，可以写成两次遍历：
+To apply `f` and then `g` to every element of a list, we can use two traversals:
 
 ```lean
 (xs.map f).map g
 ```
 
-也可以合并到一次遍历：
+Or combine them into one:
 
 ```lean
 xs.map (fun x => g (f x))
 ```
 
-完整实现与证明在 [Basic.lean](../../SameButBetter/Cases/MapFusion/Basic.lean)。
+The implementations and proofs are in [Basic.lean](../../SameButBetter/Cases/MapFusion/Basic.lean).
 
-## 等价的范围
+## Scope of equivalence
 
-这里的输入是有限列表，`f : α → β` 和 `g : β → γ` 是 Lean 中的纯函数。
-我们比较返回列表，元素和顺序都必须相同。
+Inputs are finite lists, and `f : α → β` and `g : β → γ` are pure Lean functions.
+We compare the returned lists: both their elements and their order must match.
 
-`equivalent` 对所有这样的函数和列表证明 `baseline f g xs = optimized f g xs`。
-证明使用标准库的 `List.map_map`，读者可以在编辑器中跳转查看这一引理。
+`equivalent` proves `baseline f g xs = optimized f g xs` for all such functions
+and lists. The proof uses the standard library lemma `List.map_map`, which you can
+inspect by jumping to its definition in the editor.
 
-这不直接覆盖带日志、异常或可变状态的回调。两次遍历会先完成全部 `f`，
-再完成全部 `g`；合并遍历会交替执行 `f` 与 `g`。若副作用可被观察，行为可能不同。
-把这个变换应用到 JavaScript 等语言时，需要重新检查这些前提。
+This claim does not directly cover callbacks with logging, exceptions, or mutable
+state. In a strict execution model, two passes run all applications of `f` before
+all applications of `g`; a fused pass interleaves them. Observable effects can
+therefore change behavior. Applying this transformation in a language such as
+JavaScript requires checking those assumptions again.
 
-## 成本模型
+## Cost model
 
-**访问一个非空列表节点计 1 次；访问空列表计 0 次。**
-此模型不计算 `f`、`g` 内部的工作、函数调用开销、内存分配、垃圾回收或机器指令。
+**Visiting a nonempty list cell costs one tick; visiting an empty list costs zero.**
+The model excludes work inside `f` and `g`, function-call overhead, allocation,
+garbage collection, and machine instructions.
 
-`countedMap` 递归构造结果，同时每处理一个节点把计数加一：
+`countedMap` recursively constructs the result and adds one tick per visited cell:
 
-- `baselineCounted` 执行两次 `countedMap`，第二次接收第一次的结果，并相加计数。
-- `optimizedCounted` 只执行一次 `countedMap`，回调使用 `g (f x)`。
-- `baselineCounted_result` 和 `optimizedCounted_result` 证明计数执行的返回值
-  分别等于实际 Lean 实现的返回值。
+- `baselineCounted` runs `countedMap` twice, feeding the first result to the second pass and adding their counts.
+- `optimizedCounted` runs `countedMap` once, using `g (f x)` as the callback.
+- `baselineCounted_result` and `optimizedCounted_result` prove that the counted executions return the same results as their respective Lean implementations.
 
-所以成本来自定义好的执行过程；计数结果与功能实现之间也有单独的证明。
-这些返回值证明没有声称计数器描述了编译后程序的全部运行成本。
+Costs come from an explicit execution model, with separate proofs connecting its
+results to the implementations. These result proofs do not establish that the
+counter describes the compiled program's complete runtime cost.
 
-设输入长度为 `n`：
+For an input of length `n`:
 
-| 结论 | 对应定理 |
+| Claim | Theorem |
 | --- | --- |
-| 两次遍历访问 `2n` 个节点 | `baseline_visits` |
-| 合并遍历访问 `n` 个节点 | `optimized_visits` |
-| 恰好节省 `n` 次访问 | `visits_saved` |
-| 合并后的访问次数不更多 | `visits_no_more` |
-| 当且仅当列表非空时严格更少 | `visits_strict_iff` |
+| Two passes visit `2n` cells | `baseline_visits` |
+| The fused pass visits `n` cells | `optimized_visits` |
+| Fusion saves exactly `n` visits | `visits_saved` |
+| Fusion never increases the visit count | `visits_no_more` |
+| The count is strictly lower exactly when the list is nonempty | `visits_strict_iff` |
 
-两个版本仍各应用 `f` 和 `g` 共 `n` 次。这里减少的是遍历开销，
-没有减少回调的应用次数；在此模型下两个版本也仍都是线性增长。
+Both versions still apply each of `f` and `g` exactly `n` times. Fusion reduces
+traversal work without reducing the number of callback applications. Both versions
+remain linear in this cost model.
 
-## 运行
+## Running the example
 
-在仓库根目录执行：
+From the repository root:
 
 ```sh
 lake build
 lake exe demo
 ```
 
-示例输入是 `[1, 2, 3, 4, 5]`，`f x = x + 1`，`g x = x * 2`。
-两个结果都是 `[4, 6, 8, 10, 12]`，模型中的节点访问次数是 `10 → 5`。
+The input is `[1, 2, 3, 4, 5]`, with `f x = x + 1` and `g x = x * 2`.
+Both results are `[4, 6, 8, 10, 12]`; modeled list-cell visits drop from `10` to `5`.
 
-## 目前的证据与下一步
+## Evidence and next steps
 
-- **已证明**：返回值等价，计数执行与实现的结果对应，以及上述访问次数结论。
-- **尚未测量**：实际耗时、累计分配与峰值内存。
-- **可继续探索**：对编译后的两个函数做性能基准测试，记录 Lean 版本、构建方式、
-  硬件、输入规模、重复次数和结果消费方式；检查编译器是否已经进行了相关优化。
+- **Proved:** Result equivalence, correspondence between counted and uncounted results, and the visit-count claims above.
+- **Not yet measured:** Elapsed time, cumulative allocation, and peak memory.
+- **Open experiment:** Benchmark the compiled functions, recording the Lean version, build settings, hardware, input sizes, repetitions, and how results are consumed. Check whether the compiler already performs related optimizations.
 
-`demo` 是成本模型演示，不是性能基准测试。不能据此声称实际速度提升了两倍。
+`demo` illustrates the cost model; it is not a benchmark. Its output does not
+justify a claim that the optimized program runs twice as fast.
